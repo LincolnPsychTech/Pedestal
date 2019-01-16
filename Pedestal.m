@@ -5,7 +5,7 @@ set(0,'units','pixels')
 %Add Pedestal folder to path
 addpath('Icons');
 
-% ex = Experiment;
-% de = Design;
+ ex = Experiment;
+ de = Design;
 % rt = Routine;
-em = Element;
+% em = Element;
