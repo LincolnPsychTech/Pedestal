@@ -1,0 +1,10 @@
+Pedestal
+% ex = Procedure;
+% de = Design;
+% rt = Routine;
+% em = Element;
+% f = Factors;
+
+
+i = strcmp({pr.Tag}, 'For');
+chil[pr(i).Children]
