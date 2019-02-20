@@ -1,4 +1,4 @@
-Pedestal
+w = Pedestal;
 % ex = Procedure;
 % de = Design;
 % rt = Routine;
