@@ -1,4 +1,4 @@
-function stim = pedimage(ax, stimdir, x, y, w, h)
+function stim = pedimageload(ax, stimdir, x, y, w, h)
 %% Create storage structure
 stim = struct(...
     'Type', 'img', ... % File type
@@ -26,11 +26,3 @@ end
 if isempty(y) % If y is blank...
     stim.Pos(2) = (ax.YLim(2) - stim.Pos(4)) / 2; % Default to center
 end
-
-%% Draw image
-stim.Obj = image(ax, ...
-    'XData', [stim.Pos(1), stim.Pos(1) + stim.Pos(3)], ... % Position horizontal
-    'YData', [stim.Pos(2), stim.Pos(2) + stim.Pos(4)], ... % Position vertical
-    'CData', flipud(img), ... % Flip upside down as y axes are backwards
-    'AlphaData', flipud(alpha) ... % Apply transparency
-    );
