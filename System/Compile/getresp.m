@@ -1,11 +1,5 @@
-function [resp, rt] = getresp(w, imDir, dur)
+function [resp, rt] = getresp(w, dur)
 % Display an image and collect a response
-
-map = imread(imDir); % Read in image
-im = image(w, map); % Print to screen
-w.TickLength = [0 0]; % Hide ticks
-drawnow
-
 tic % Start a timer
 if dur == Inf % If duration is infinity...
     waitfor(w.Parent, 'UserData'); % Wait for a response
@@ -28,6 +22,4 @@ if strcmp('escape', resp) % If they pressed escape...
     close all % Exit
     error('Experiment terminated by user'); % Print an error
 end
-
-delete(im); % Delete image
 
