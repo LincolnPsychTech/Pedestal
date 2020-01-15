@@ -8,3 +8,4 @@ else
         error("No active window found.");
     end
 end
+drawnow

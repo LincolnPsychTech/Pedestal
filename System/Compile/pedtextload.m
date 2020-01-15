@@ -1,4 +1,4 @@
-function stim = pedtextload(ax, stimdir, x, y)
+function stim = pedtextload(ax, stimdir, varargin)
 %% Create storage structure
 stim = struct(...
     'Type', 'txt', ... % File type
@@ -12,13 +12,18 @@ stim = struct(...
 stim.Text = fileread(stimdir); % Read text from file
 
 %% Defaults for non-values
-if isempty(x) % If x is blank...
-    stim.Pos(1) = mean(ax.XLim)*0.2; % Default to center
-else
-    stim.Pos(1) = x;
-end
-if isempty(y) % If y is blank...
-    stim.Pos(2) = mean(ax.YLim); % Default to center
-else
-    stim.Pos(2) = y;
+defSize = [... % Default position values
+    mean(ax.XLim)*0.2, ...
+    mean(ax.YLim) ...
+    ];
+
+for n = 1:length(defSize) % For each position index
+    try
+        stim.Pos(n) = varargin{n}; % Set position to corresponding specified value
+        if ~isnumeric(stim.Pos(n)) % If supplied value is not numeric...
+            error('Position values must be numeric'); % Throw error for prosterity
+        end
+    catch % If this fails (i.e. if no value is supplied)
+        stim.Pos(n) = defSize(n); % Use default value
+    end
 end
