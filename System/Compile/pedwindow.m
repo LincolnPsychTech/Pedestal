@@ -12,13 +12,19 @@ fig = figure(... % Create full screen figure
     'InnerPosition', sDim, ... % Fullscreen figure
     'KeyPressFcn', @keyFcn, ... % Create keypress listener
     'WindowButtonDownFcn', @clickFcn, ... % Create click listener 
-    'SizeChangedFcn', @sizeFcn ... % Function to match axis limits of fullscreen axes to figure size
+    'SizeChangedFcn', @sizeFcn, ... % Function to match axis limits of fullscreen axes to figure size
+    'CloseRequestFcn', @closeFcn, ... % Function to save data on close
+    'UserData', struct(...
+        'Key', [], ...
+        'Click', [], ...
+        'Store', [] ...
+        ) ...
     );
 
 ax = axes(fig, ... % Create axis within figure
-    'Position', [0, 0, 1, 1], ... % Occupy entire figure
-    'XLim', [0, sDim(3)], ... % X limits are width of screen in pixels
-    'YLim', [0, sDim(4)], ... % Y limits are height of screen in pixels
+    'Position', [0 0 1 1], ... % Occupy entire figure
+    'XLim', sDim([1,3]), ... % X limits are width of screen in pixels
+    'YLim', sDim([1,3]), ... % Y limits are height of screen in pixels
     'Color', col, ... % Colour defined by user
     'TickLength', [0 0], ... % Remove ticks
     'Box', 'off' ... % Remove box
@@ -27,26 +33,30 @@ ax = axes(fig, ... % Create axis within figure
 
 
     function keyFcn(app, event)
-        try
-            app.UserData = [app.UserData, {event.Key}]; % Append last key to user data
-        catch
-            app.UderData = event.Key; % Set the UserData of the figure to equal the key which was just pressed
+        app.UserData.Key = event.Key; % Store last key to user data
+        if strcmp(event.Key, 'escape')
+            close(app);
         end
     end
+
     function clickFcn(app, ~)
-        try
-            app.UserData = [app.UserData, {get(app.Children(1), 'CurrentPoint')}]; % Append mouse position to user data
-        catch
-            app.UserData = get(app.Children(1), 'CurrentPoint'); % Set the UserData of the figure to equal the coords of mouse
-        end
+        axArray = findobj(app.Children, 'Type', 'axes', 'Position', [0 0 1 1]); % Find all full screen axes
+        app.UserData.Click = get(axArray, 'CurrentPoint'); % Store mouse position to user data
     end
+
     function sizeFcn(app, ~)
-        axArray = findobj(app.Children, 'Type', 'axes', 'Position', [0 0 1 1]);
-        for a = axArray'
+        axArray = findobj(app.Children, 'Type', 'axes', 'Position', [0 0 1 1]); % Find all full screen axes
+        for a = axArray' % For each axis...
             set(a, ...
-                'XLim', [0, app.Position(3)], ...
-                'YLim', [0, app.Position(4)] ...
+                'XLim', [0, app.Position(3)], ... % Match XLim to figure width
+                'YLim', [0, app.Position(4)] ... % Match YLim for figure height
                 );
         end
+    end
+
+    function closeFcn(app, ~)
+        assignin('base', 'data', app.UserData.Store);
+        disp('Experiment terminated by user.');
+        delete(app)
     end
 end
